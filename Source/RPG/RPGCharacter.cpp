@@ -8,10 +8,8 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
-//////////////////////////////////////////////////////////////////////////
-// ARPGCharacter
-
-ARPGCharacter::ARPGCharacter()
+ARPGCharacter::ARPGCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -44,10 +42,20 @@ ARPGCharacter::ARPGCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-}
 
-//////////////////////////////////////////////////////////////////////////
-// Input
+	/*static ConstructorHelpers::FObjectFinder<UDataTable> ExpDataTableObject(TEXT("DataTable'/Game/DataTables/ExperienceDataTable.ExperienceDataTable'"));
+	if (ExpDataTableObject.Succeeded())
+		ExpDataTable = ExpDataTableObject.Object;*/
+
+	CharacterInfo.CharacterName = "Hero";
+	CharacterInfo.DisplayName = FText::FromString("Name");
+	CharacterInfo.CurrentExperience = 0;
+	CharacterInfo.CurrentLevel = 1;
+	CharacterInfo.CurrentHP = 100;
+	CharacterInfo.CurrentMP = 0;
+	CharacterInfo.Stats.FindOrAdd(CharacterStatsEnum::EMaxHP, 100);
+	CharacterInfo.Stats.FindOrAdd(CharacterStatsEnum::EMaxMP, 0);
+}
 
 void ARPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {

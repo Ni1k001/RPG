@@ -3,7 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine.h"
+#include "Engine/DataTable.h"
 #include "GameFramework/Character.h"
+#include "RPGCharacterInfoStruct.h"
 #include "RPGCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -19,7 +22,7 @@ class ARPGCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 public:
-	ARPGCharacter();
+	ARPGCharacter(const FObjectInitializer& ObjectInitializer);
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -59,5 +62,12 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FCharacterInfoStruct CharacterInfo;
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UDataTable* ExpDataTable;*/
 };
 
