@@ -13,15 +13,15 @@
 UENUM(BlueprintType)
 enum class CharacterStatsEnum : uint8
 {
-	EMaxHP			UMETA(DisplayName = "MaxHP"),
-	EMaxMP			UMETA(DisplayName = "MaxMP"),
-	EStrength 		UMETA(DisplayName = "Strength"),
-	EDexterity 		UMETA(DisplayName = "Dexterity"),
-	EVitality 		UMETA(DisplayName = "Vitality"),
-	EMagic			UMETA(DisplayName = "Magic"),
-	ESpirit			UMETA(DisplayName = "Spirit"),
-	ELuck	 		UMETA(DisplayName = "Luck"),
-	EInitiative		UMETA(DisplayName = "Initiative"),
+	EMaxHP				UMETA(DisplayName = "MaxHP"),
+	EMaxMP				UMETA(DisplayName = "MaxMP"),
+	EStrength			UMETA(DisplayName = "Strength"),
+	EDexterity			UMETA(DisplayName = "Dexterity"),
+	EVitality 			UMETA(DisplayName = "Vitality"),
+	EMagic				UMETA(DisplayName = "Magic"),
+	ESpirit				UMETA(DisplayName = "Spirit"),
+	ELuck	 			UMETA(DisplayName = "Luck"),
+	EInitiative			UMETA(DisplayName = "Initiative"),
 };
 
 UENUM(BlueprintType)
