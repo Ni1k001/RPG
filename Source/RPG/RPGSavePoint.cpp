@@ -7,6 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/ArrowComponent.h"
 #include "DisplayDebugHelpers.h"
+#include "RPGGameInstance.h"
+#include "RPGCharacter.h"
 
 // Sets default values
 ARPGSavePoint::ARPGSavePoint()
@@ -27,6 +29,8 @@ ARPGSavePoint::ARPGSavePoint()
 
 	RootComponent = SavePointArea;
 
+	SavePointArea->OnComponentBeginOverlap.AddDynamic(this, &ARPGSavePoint::OnActorBeginOverlap);
+	SavePointArea->OnComponentEndOverlap.AddDynamic(this, &ARPGSavePoint::OnActorEndOverlap);
 
 	SpawnPointCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SpawnPoint"));
 	SpawnPointCapsule->InitCapsuleSize(34.0f, 88.0f);
@@ -56,4 +60,46 @@ void ARPGSavePoint::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+FName ARPGSavePoint::GetSavePointName()
+{
+	return SavePointName;
+}
+
+void ARPGSavePoint::SetSavePointName(FName InSavePointName)
+{
+	SavePointName = InSavePointName;
+}
+
+void ARPGSavePoint::OnActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Super::OnActorBeginOverlap;
+
+	if (OtherActor != NULL && OtherActor->IsA(ARPGCharacter::StaticClass()))
+	{
+		URPGGameInstance* GameInstance = Cast<URPGGameInstance>(GetGameInstance());
+
+		if (GameInstance)
+		{
+			GameInstance->SetSavePointName(GetSavePointName());
+			GameInstance->SetCanSaveGame(true);
+		}
+	}
+}
+
+void ARPGSavePoint::OnActorEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnActorEndOverlap;
+
+	if (OtherActor != NULL && OtherActor->IsA(ARPGCharacter::StaticClass()))
+	{
+		URPGGameInstance* GameInstance = Cast<URPGGameInstance>(GetGameInstance());
+
+		if (GameInstance)
+		{
+			GameInstance->SetSavePointName(FName::FName());
+			GameInstance->SetCanSaveGame(false);
+		}
+	}
 }

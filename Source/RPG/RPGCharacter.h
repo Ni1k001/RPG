@@ -70,4 +70,3 @@ public:
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UDataTable* ExpDataTable;*/
 };
-

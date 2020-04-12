@@ -19,6 +19,9 @@ private:
 	/*				DEFAULT				*/
 	FTimespan* StartTime;
 
+	UPROPERTY(BlueprintGetter = GetCanSaveGame, BlueprintSetter = SetCanSaveGame, Category = "Default")
+		bool bCanSaveGame;
+
 	/*				INVENTORY MANAGER				*/
 	UPROPERTY(BlueprintGetter = GetGold, BlueprintSetter = SetGold, Category = "InventoryManager")
 		int32 Gold;
@@ -48,6 +51,9 @@ private:
 
 	UPROPERTY(BlueprintGetter = GetEnemiesTransformsBeforeBattle, BlueprintSetter = SetEnemiesTransformsBeforeBattle, Category = "MapInfo")
 		TMap<FName, FTransform> EnemiesTransformsBeforeBattle;
+
+	UPROPERTY(BlueprintSetter = SetSavePointName, Category = "MapInfo")
+		FName SavePointName;
 
 	/*				ENCOUNTERS				*/
 	UPROPERTY(BlueprintGetter = GetPossibleEncounters, BlueprintSetter = SetPossibleEncounters, Category = "Encounters")
@@ -81,12 +87,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 		static FString GetAppVersion();
 
+	UFUNCTION(BlueprintGetter, Category = "Default")
+		bool GetCanSaveGame();
+
+	UFUNCTION(BlueprintSetter, Category = "Default")
+		void SetCanSaveGame(bool InBCanSaveGame);
+
+
 	/*				SAVED DATA				*/
 	UFUNCTION(BlueprintCallable)
-		void SaveData(FString SaveSlotName, int32 UserIndex, FName SavePoint);
+		void SaveData(FString SaveSlotName, int32 UserIndex);
 
 	UFUNCTION(BlueprintCallable)
-		void LoadData(FString SaveSlotName, int32 UserIndex, FName& SavePoint);
+		void LoadData(FString SaveSlotName, int32 UserIndex);
 
 	/*				INVENTORY MANAGER				*/
 	UFUNCTION(BlueprintGetter, Category = "InventoryManager")
@@ -151,6 +164,12 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category = "MapInfo")
 		void SetEnemiesTransformsBeforeBattle(TMap<FName, FTransform> InEnemiesTransformsBeforeBattle);
+
+	UFUNCTION()
+		FName GetSavePointName();
+
+	UFUNCTION(BlueprintSetter, Category = "MapInfo")
+		void SetSavePointName(FName InSavePointName);
 
 	/*				ENCOUNTERS				*/
 	UFUNCTION(BlueprintGetter, Category = "Encounters")

@@ -32,4 +32,16 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		FName SavePointName;
+
+	UFUNCTION()
+		FName GetSavePointName();
+
+	UFUNCTION()
+		void SetSavePointName(FName InSavePointName);
+
+	UFUNCTION(BlueprintCallable)
+		void OnActorBeginOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+		void OnActorEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

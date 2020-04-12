@@ -6,12 +6,15 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Engine.h"
+#include "RPGCharacter.h"
+#include "RPGSavePoint.h"
 
 /*				DEFAULT				*/
 void URPGGameInstance::Init()
 {
 	UGameInstance::Init();
 	TimePlayed = new FTimespan(0,0,0,0,0);
+	bCanSaveGame = false;
 }
 
 void URPGGameInstance::OnStart()
@@ -34,31 +37,45 @@ FString URPGGameInstance::GetAppVersion()
 	return AppVersion;
 }
 
-	/*				SAVED DATA				*/
-void URPGGameInstance::SaveData(FString SaveSlotName, int32 UserIndex, FName SavePoint)
+bool URPGGameInstance::GetCanSaveGame()
 {
-	UpdateTimePlayed();
-
-	URPGSaveGame* SaveGameInstance = Cast<URPGSaveGame>(UGameplayStatics::CreateSaveGameObject(URPGSaveGame::StaticClass()));
-
-	SaveGameInstance->Gold = GetGold();
-	SaveGameInstance->Party = GetParty();
-	SaveGameInstance->Characters = GetCharacters();
-	SaveGameInstance->TimePlayed = *GetTimePlayed();
-	SaveGameInstance->WorldMapName = GetWorldMapName();
-	SaveGameInstance->SavePoint = SavePoint;
-	SaveGameInstance->bRandomEncounter = GetRandomEncounter();
-	SaveGameInstance->InteractedObjects = GetInteractedObjects();
-	SaveGameInstance->BattledEnemies = GetBattledEnemies();
-
-	UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, (uint32)UserIndex);
-
-	UE_LOG(LogTemp, Warning, TEXT("SAVED GOLD: %d"), GetGold());
-	UE_LOG(LogTemp, Warning, TEXT("SAVED TIME: %d:%d:%d"), FMath::FloorToInt(GetTimePlayed()->GetTotalHours()), GetTimePlayed()->GetMinutes(), GetTimePlayed()->GetSeconds());
-	UE_LOG(LogTemp, Warning, TEXT("CURRENT TIME: %d:%d:%d"), FMath::FloorToInt(SaveGameInstance->TimePlayed.GetTotalHours()), SaveGameInstance->TimePlayed.GetMinutes(), SaveGameInstance->TimePlayed.GetSeconds());
+	return bCanSaveGame;
 }
 
-void URPGGameInstance::LoadData(FString SaveSlotName, int32 UserIndex, FName& SavePoint)
+void URPGGameInstance::SetCanSaveGame(bool InBCanSaveGame)
+{
+	bCanSaveGame = InBCanSaveGame;
+}
+
+	/*				SAVED DATA				*/
+void URPGGameInstance::SaveData(FString SaveSlotName, int32 UserIndex)
+{
+	if (bCanSaveGame)
+	{
+		UpdateTimePlayed();
+
+		URPGSaveGame* SaveGameInstance = Cast<URPGSaveGame>(UGameplayStatics::CreateSaveGameObject(URPGSaveGame::StaticClass()));
+
+		SaveGameInstance->Gold = GetGold();
+		SaveGameInstance->Party = GetParty();
+		SaveGameInstance->Characters = GetCharacters();
+		SaveGameInstance->TimePlayed = *GetTimePlayed();
+		SaveGameInstance->WorldMapName = GetWorldMapName();
+		SaveGameInstance->SavePoint = GetSavePointName();
+		SaveGameInstance->bRandomEncounter = GetRandomEncounter();
+		SaveGameInstance->InteractedObjects = GetInteractedObjects();
+		SaveGameInstance->BattledEnemies = GetBattledEnemies();
+
+		UGameplayStatics::SaveGameToSlot(SaveGameInstance, SaveSlotName, (uint32)UserIndex);
+
+		UE_LOG(LogTemp, Warning, TEXT("SAVED GOLD: %d"), GetGold());
+		UE_LOG(LogTemp, Warning, TEXT("SAVED TIME: %d:%d:%d"), FMath::FloorToInt(GetTimePlayed()->GetTotalHours()), GetTimePlayed()->GetMinutes(), GetTimePlayed()->GetSeconds());
+		UE_LOG(LogTemp, Warning, TEXT("CURRENT TIME: %d:%d:%d"), FMath::FloorToInt(SaveGameInstance->TimePlayed.GetTotalHours()), SaveGameInstance->TimePlayed.GetMinutes(), SaveGameInstance->TimePlayed.GetSeconds());
+		UE_LOG(LogTemp, Warning, TEXT("SAVED SAVEPOINTNAME: %s"), *GetSavePointName().ToString());
+	}
+}
+
+void URPGGameInstance::LoadData(FString SaveSlotName, int32 UserIndex)
 {
 	URPGSaveGame* LoadGameInstance = Cast<URPGSaveGame>(UGameplayStatics::CreateSaveGameObject(URPGSaveGame::StaticClass()));
 
@@ -73,13 +90,42 @@ void URPGGameInstance::LoadData(FString SaveSlotName, int32 UserIndex, FName& Sa
 		SetRandomEncounter(LoadGameInstance->bRandomEncounter);
 		SetInteractedObjects(LoadGameInstance->InteractedObjects);
 		SetBattledEnemies(LoadGameInstance->BattledEnemies);
-		SavePoint = LoadGameInstance->SavePoint;
+		SetSavePointName(LoadGameInstance->SavePoint);
 
 		StartTime = new FTimespan(FDateTime::Now().GetTicks());
 
 		UE_LOG(LogTemp, Warning, TEXT("LOADED GOLD: %d"), GetGold());
-		UE_LOG(LogTemp, Warning, TEXT("SAVED TIME: %d:%d:%d"), FMath::FloorToInt(GetTimePlayed()->GetTotalHours()), GetTimePlayed()->GetMinutes(), GetTimePlayed()->GetSeconds());
-		UE_LOG(LogTemp, Warning, TEXT("CURRENT TIME: %d:%d:%d"), FMath::FloorToInt(LoadGameInstance->TimePlayed.GetTotalHours()), LoadGameInstance->TimePlayed.GetMinutes(), LoadGameInstance->TimePlayed.GetSeconds());
+		UE_LOG(LogTemp, Warning, TEXT("LOADED TIME: %d:%d:%d"), FMath::FloorToInt(LoadGameInstance->TimePlayed.GetTotalHours()), LoadGameInstance->TimePlayed.GetMinutes(), LoadGameInstance->TimePlayed.GetSeconds());
+		UE_LOG(LogTemp, Warning, TEXT("CURRENT TIME: %d:%d:%d"), FMath::FloorToInt(GetTimePlayed()->GetTotalHours()), GetTimePlayed()->GetMinutes(), GetTimePlayed()->GetSeconds());
+		UE_LOG(LogTemp, Warning, TEXT("LOADED SAVEPOINTNAME: %s"), *LoadGameInstance->SavePoint.ToString());
+
+		ARPGCharacter* Player = Cast<ARPGCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+
+		if (Player)
+		{
+			if (GetSavePointName().IsNone())
+			{
+				Player->GetMovementComponent()->StopMovementImmediately();
+				Player->SetActorTransform(FTransform(FRotator(0.f, 0.f, 0.f), FVector(-770.f, 330.f, 260.f), FVector(1.f)));
+			}
+			else
+			{
+				for (FActorIterator It(GetWorld(), ARPGSavePoint::StaticClass()); It; ++It)
+				{
+					ARPGSavePoint* SavePoint = Cast<ARPGSavePoint>(*It);
+					if (SavePoint)
+					{
+						if (SavePoint->GetSavePointName() == GetSavePointName())
+						{
+							//Player->SetActorLocation(SavePoint->SpawnPointCapsule->GetComponentLocation());
+							Player->GetMovementComponent()->StopMovementImmediately();
+							Player->SetActorTransform(FTransform(SavePoint->ArrowComponent->GetRelativeRotation(), SavePoint->SpawnPointCapsule->GetComponentLocation(), FVector(1.f)));
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -197,6 +243,16 @@ TMap<FName, FTransform> URPGGameInstance::GetEnemiesTransformsBeforeBattle()
 void URPGGameInstance::SetEnemiesTransformsBeforeBattle(TMap<FName, FTransform> InEnemiesTransformsBeforeBattle)
 {
 	EnemiesTransformsBeforeBattle = InEnemiesTransformsBeforeBattle;
+}
+
+FName URPGGameInstance::GetSavePointName()
+{
+	return SavePointName;
+}
+
+void URPGGameInstance::SetSavePointName(FName InSavePointName)
+{
+	SavePointName = InSavePointName;
 }
 
 /*				ENCOUNTERS				*/
