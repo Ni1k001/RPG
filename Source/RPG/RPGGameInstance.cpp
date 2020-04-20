@@ -149,7 +149,6 @@ TArray<FCharacterInfoStruct> URPGGameInstance::GetParty()
 	return Party;
 }
 
-UFUNCTION(BlueprintSetter, Category = "CharacterManager")
 void URPGGameInstance::SetParty(TArray<FCharacterInfoStruct> InParty)
 {
 	Party = InParty;

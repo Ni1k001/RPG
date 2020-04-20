@@ -12,6 +12,8 @@
 UCLASS()
 class RPG_API ARPGPlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
+
+    ARPGPlayerController();
 
 };

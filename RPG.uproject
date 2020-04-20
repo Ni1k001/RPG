@@ -36,6 +36,14 @@
 				"Linux",
 				"Mac"
 			]
+		},
+		{
+			"Name": "SunPosition",
+			"Enabled": true
+		},
+		{
+			"Name": "PreLoadScreenMoviePlayer",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

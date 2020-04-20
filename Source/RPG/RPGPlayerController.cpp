@@ -3,3 +3,9 @@
 
 #include "RPGPlayerController.h" 
 
+ARPGPlayerController::ARPGPlayerController()
+{
+	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+	bEnableMouseOverEvents = true;
+}

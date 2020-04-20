@@ -23,3 +23,13 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         int32 Hero4;
 };
+
+USTRUCT(BlueprintType)
+struct FEncountersTable : public FTableRowBase
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        TMap<int, FName> Enemies;
+};
