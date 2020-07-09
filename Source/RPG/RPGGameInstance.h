@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "RPGCharacterInfoStruct.h"
+#include "RPGItemDataStruct.h"
 #include "RPGGameInstance.generated.h"
 
 /**
@@ -26,8 +27,8 @@ private:
 	UPROPERTY(BlueprintGetter = GetGold, BlueprintSetter = SetGold, Category = "InventoryManager")
 		int32 Gold;
 
-	//UPROPERTY(VisibleAnywhere)
-	//	INVENTORY - ARRAY OF ITEMS
+	UPROPERTY(BlueprintGetter = GetInventory, BlueprintSetter = SetInventory, Category = "InventoryManager")
+		TArray<FItemDataStruct> Inventory;
 
 	/*				CHARACTERS MANAGER				*/
 	UPROPERTY(BlueprintGetter = GetParty, BlueprintSetter = SetParty, Category = "CharacterManager")
@@ -108,8 +109,11 @@ public:
 	UFUNCTION(BlueprintSetter, Category = "InventoryManager")
 		void SetGold(int32 InGold);
 
-	//UFUNCTION
-	//UFUNCTION
+	UFUNCTION(BlueprintGetter, Category = "InventoryManager")
+		TArray<FItemDataStruct> GetInventory();
+
+	UFUNCTION(BlueprintSetter, Category = "InventoryManager")
+		void SetInventory(TArray<FItemDataStruct> InInventory);
 
 	/*				CHARACTERS MANAGER				*/
 	UFUNCTION(BlueprintGetter, Category = "CharacterManager")

@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Engine/UserDefinedEnum.h"
-#include "RPGCharacterStatsEnum.generated.h"
+#include "RPGStatTypeEnum.generated.h"
 
 /**
  * 
  */
 
 UENUM(BlueprintType)
-enum class CharacterStatsEnum : uint8
+enum class StatsEnum : uint8
 {
-	EMaxHP				UMETA(DisplayName = "MaxHP"),
-	EMaxMP				UMETA(DisplayName = "MaxMP"),
+	EHP					UMETA(DisplayName = "HP"),
+	EMP					UMETA(DisplayName = "MP"),
 	EStrength			UMETA(DisplayName = "Strength"),
 	EDexterity			UMETA(DisplayName = "Dexterity"),
 	EVitality 			UMETA(DisplayName = "Vitality"),
@@ -25,7 +25,7 @@ enum class CharacterStatsEnum : uint8
 };
 
 UENUM(BlueprintType)
-enum class CharacterDerivedStatsEnum : uint8
+enum class DerivedStatsEnum : uint8
 {
 	EAttack					UMETA(DisplayName = "Attack"),
 	EAttackChance			UMETA(DisplayName = "AttackChance"),

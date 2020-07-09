@@ -140,8 +140,16 @@ void URPGGameInstance::SetGold(int32 InGold)
 	Gold = InGold;
 }
 
-//UFUNCTION
-//UFUNCTION
+
+TArray<FItemDataStruct> URPGGameInstance::GetInventory()
+{
+	return Inventory;
+}
+
+void URPGGameInstance::SetInventory(TArray<FItemDataStruct> InInventory)
+{
+	Inventory = InInventory;
+}
 
 /*				CHARACTERS MANAGER				*/
 TArray<FCharacterInfoStruct> URPGGameInstance::GetParty()

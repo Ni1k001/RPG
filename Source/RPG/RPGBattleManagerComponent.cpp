@@ -124,16 +124,29 @@ TMap<FName, FTransform> URPGBattleManagerComponent::GetWorldEnemiesTransforms()
 void URPGBattleManagerComponent::SpawnPlayerTeam()
 {
 	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
-
-	/*for (int i = 0; i < GI->GetParty().Num(); i++)
+ 
+	//TODO
+	for (int i = 0; i < GI->GetParty().Num(); i++)
 	{
-
-	}*/
+		
+	}
 }
 
 void URPGBattleManagerComponent::SpawnEnemyTeam()
 {
+	
+}
 
+FTransform URPGBattleManagerComponent::GetBattleSpawnPointTransform(bool bEnemySpot, int32 SpotIndex)
+{
+	//TODO
+
+	if (bEnemySpot)
+	{
+		return FTransform(ENoInit::NoInit);
+	}
+
+	return FTransform(ENoInit::NoInit);
 }
 
 /*				BATTLE IN PROGRESS				*/

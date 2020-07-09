@@ -84,6 +84,9 @@ public:
 	UFUNCTION()
 		void SpawnEnemyTeam();
 
+	UFUNCTION()
+		FTransform GetBattleSpawnPointTransform(bool bEnemySpot, int32 SpotIndex);
+
 	/*				BATTLE IN PROGRESS				*/
 	UFUNCTION(BlueprintCallable)
 		void GetCharacterWithMaxInitiative(bool& OutSuccess, ACharacter*& OutCharacter); //Change to BattleCharacterBase

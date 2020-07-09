@@ -53,8 +53,8 @@ ARPGCharacter::ARPGCharacter(const FObjectInitializer& ObjectInitializer)
 	CharacterInfo.CurrentLevel = 1;
 	CharacterInfo.CurrentHP = 100;
 	CharacterInfo.CurrentMP = 0;
-	CharacterInfo.Stats.FindOrAdd(CharacterStatsEnum::EMaxHP, 100);
-	CharacterInfo.Stats.FindOrAdd(CharacterStatsEnum::EMaxMP, 0);
+	CharacterInfo.CharacterStats.FindOrAdd(StatsEnum::EHP, 100);
+	CharacterInfo.CharacterStats.FindOrAdd(StatsEnum::EMP, 0);
 }
 
 void ARPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
