@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/DataTable.h"
+#include "RPG/enums/RPGStatTypeEnum.h"
 #include "RPGDataTables.generated.h"
 
 USTRUCT(BlueprintType)
@@ -32,4 +33,32 @@ struct FEncountersTable : public FTableRowBase
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         TMap<int, FName> Enemies;
+};
+
+USTRUCT(BlueprintType)
+struct FEnemiesTable : public FTableRowBase
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FName Name;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FText DisplayName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int32 Level;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int32 ExperienceReward;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int32 GoldReward;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        TMap<StatsEnum, float> Stats;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        TMap<DerivedStatsEnum, float> DerivedStats;
 };

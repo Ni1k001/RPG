@@ -6,7 +6,9 @@
 #include "Engine.h"
 #include "Engine/DataTable.h"
 #include "GameFramework/Character.h"
-#include "RPGCharacterInfoStruct.h"
+
+#include "RPG/structs/RPGCharacterInfoStruct.h"
+
 #include "RPGCharacter.generated.h"
 
 UCLASS(config=Game)

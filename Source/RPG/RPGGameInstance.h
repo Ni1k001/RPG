@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "RPGCharacterInfoStruct.h"
-#include "RPGItemDataStruct.h"
+#include "RPG/structs/RPGCharacterInfoStruct.h"
+#include "RPG/structs/RPGItemDataStruct.h"
+#include "RPG/structs/RPGPartySlotStruct.h"
 #include "RPGGameInstance.generated.h"
 
 /**
@@ -32,7 +33,7 @@ private:
 
 	/*				CHARACTERS MANAGER				*/
 	UPROPERTY(BlueprintGetter = GetParty, BlueprintSetter = SetParty, Category = "CharacterManager")
-		TArray<FCharacterInfoStruct> Party;
+		TArray<FPartySlotStruct> Party;
 
 	UPROPERTY(BlueprintGetter = GetCharacters, BlueprintSetter = SetCharacters, Category = "CharacterManager")
 		TMap<FName, FCharacterInfoStruct> Characters;
@@ -43,6 +44,9 @@ private:
 	/*				MAP INFO				*/
 	UPROPERTY(BlueprintGetter = GetWorldMapName,BlueprintSetter = SetWorldMapName, Category = "MapInfo")
 		FName WorldMapName;
+
+	UPROPERTY(BlueprintGetter = GetWorldMapSpawnPointName, BlueprintSetter = SetWorldMapSpawnPointName, Category = "MapInfo")
+		FName WorldMapSpawnPointName;
 
 	UPROPERTY(BlueprintGetter = GetWorldTransformBeforeBattle, BlueprintSetter = SetWorldTransformBeforeBattle, Category = "MapInfo")
 		FTransform WorldTransformBeforeBattle;
@@ -117,13 +121,10 @@ public:
 
 	/*				CHARACTERS MANAGER				*/
 	UFUNCTION(BlueprintGetter, Category = "CharacterManager")
-		TArray<FCharacterInfoStruct> GetParty();
+		TArray<FPartySlotStruct> GetParty();
 
 	UFUNCTION(BlueprintSetter, Category = "CharacterManager")
-		void SetParty(TArray<FCharacterInfoStruct> InParty);
-
-	UFUNCTION(BlueprintCallable, Category = "CharacterManager")
-		void ChangePartyMember(int32 Index, FCharacterInfoStruct Character);
+		void SetParty(TArray<FPartySlotStruct> InParty);
 
 	UFUNCTION(BlueprintGetter, Category = "CharacterManager")
 		TMap<FName, FCharacterInfoStruct> GetCharacters();
@@ -150,6 +151,12 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category = "MapInfo")
 		void SetWorldMapName(FName InWorldMapName);
+
+	UFUNCTION(BlueprintGetter, Category = "MapInfo")
+		FName GetWorldMapSpawnPointName();
+
+	UFUNCTION(BlueprintSetter, Category = "MapInfo")
+		void SetWorldMapSpawnPointName(FName InWorldMapSpawnPointName);
 
 	UFUNCTION(BlueprintGetter, Category = "MapInfo")
 		FTransform GetWorldTransformBeforeBattle();

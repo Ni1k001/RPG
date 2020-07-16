@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "RPGCharacterInfoStruct.h"
+#include "RPG/structs/RPGCharacterInfoStruct.h"
+#include "RPG/structs/RPGPartySlotStruct.h"
 #include "RPGSaveGame.generated.h"
 
 /**
@@ -32,7 +33,7 @@ public:
 
 	/*				CHARACTERS MANAGER				*/
 	UPROPERTY(VisibleAnywhere)
-		TArray<FCharacterInfoStruct> Party;
+		TArray<FPartySlotStruct> Party;
 
 	UPROPERTY(VisibleAnywhere)
 		TMap<FName, FCharacterInfoStruct> Characters;

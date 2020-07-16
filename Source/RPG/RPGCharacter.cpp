@@ -47,14 +47,14 @@ ARPGCharacter::ARPGCharacter(const FObjectInitializer& ObjectInitializer)
 	if (ExpDataTableObject.Succeeded())
 		ExpDataTable = ExpDataTableObject.Object;*/
 
-	CharacterInfo.CharacterName = "Hero";
+	CharacterInfo.Name = "Hero";
 	CharacterInfo.DisplayName = FText::FromString("Name");
 	CharacterInfo.CurrentExperience = 0;
 	CharacterInfo.CurrentLevel = 1;
 	CharacterInfo.CurrentHP = 100;
 	CharacterInfo.CurrentMP = 0;
-	CharacterInfo.CharacterStats.FindOrAdd(StatsEnum::EHP, 100);
-	CharacterInfo.CharacterStats.FindOrAdd(StatsEnum::EMP, 0);
+	CharacterInfo.Stats.FindOrAdd(StatsEnum::EHP, 100);
+	CharacterInfo.Stats.FindOrAdd(StatsEnum::EMP, 0);
 }
 
 void ARPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)

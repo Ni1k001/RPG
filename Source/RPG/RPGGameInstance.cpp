@@ -6,8 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Engine.h"
-#include "RPGCharacter.h"
-#include "RPGSavePoint.h"
+#include "RPG/RPGCharacter.h"
+#include "RPG/world/RPGSavePoint.h"
 
 /*				DEFAULT				*/
 void URPGGameInstance::Init()
@@ -152,19 +152,14 @@ void URPGGameInstance::SetInventory(TArray<FItemDataStruct> InInventory)
 }
 
 /*				CHARACTERS MANAGER				*/
-TArray<FCharacterInfoStruct> URPGGameInstance::GetParty()
+TArray<FPartySlotStruct> URPGGameInstance::GetParty()
 {
 	return Party;
 }
 
-void URPGGameInstance::SetParty(TArray<FCharacterInfoStruct> InParty)
+void URPGGameInstance::SetParty(TArray<FPartySlotStruct> InParty)
 {
 	Party = InParty;
-}
-
-void URPGGameInstance::ChangePartyMember(int32 Index, FCharacterInfoStruct Character)
-{
-	Party[Index] = Character;
 }
 
 TMap<FName, FCharacterInfoStruct> URPGGameInstance::GetCharacters()
@@ -179,7 +174,7 @@ void URPGGameInstance::SetCharacters(TMap<FName, FCharacterInfoStruct> InCharact
 
 void URPGGameInstance::SetCharacter(FCharacterInfoStruct InCharacter, int32 InIndex)
 {
-	Characters.FindOrAdd(InCharacter.CharacterName, InCharacter);
+	Characters.FindOrAdd(InCharacter.Name, InCharacter);
 }
 
 /*				TIMER				*/
@@ -220,6 +215,16 @@ FName URPGGameInstance::GetWorldMapName()
 void URPGGameInstance::SetWorldMapName(FName InWorldMapName)
 {
 	WorldMapName = InWorldMapName;
+}
+
+FName URPGGameInstance::GetWorldMapSpawnPointName()
+{
+	return WorldMapSpawnPointName;
+}
+
+void URPGGameInstance::SetWorldMapSpawnPointName(FName InWorldMapSpawnPointName)
+{
+	WorldMapSpawnPointName = InWorldMapSpawnPointName;
 }
 
 FTransform URPGGameInstance::GetWorldTransformBeforeBattle()
