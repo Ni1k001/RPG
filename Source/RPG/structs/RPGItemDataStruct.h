@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPGBaseItemStruct.h"
 #include "Engine/UserDefinedStruct.h"
+
+#include "RPG/structs/RPGBaseItemStruct.h"
+
 #include "RPGItemDataStruct.generated.h"
 
 /**
@@ -25,5 +27,15 @@ struct FItemDataStruct
 	FItemDataStruct()
 	{
 		StackAmount = 0;
+	}
+
+	FORCEINLINE bool operator==(const FItemDataStruct& Other) const
+	{
+		 return (BaseItemData == Other.BaseItemData);
+	}
+
+	FORCEINLINE bool operator!=(const FItemDataStruct& Other) const
+	{
+		return !(*this == Other);
 	}
 };

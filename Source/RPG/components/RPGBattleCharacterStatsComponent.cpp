@@ -2,14 +2,19 @@
 
 
 #include "RPGBattleCharacterStatsComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
+
+#include "RPG/RPGGameInstance.h"
+
+#include "RPG/battle/RPGBattleCharacter.h"
+
+#include "RPG/components/RPGBattleManagerComponent.h"
 
 #include "RPG/interfaces/RPGBattleCommunicationInterface.h"
 
 #include "RPG/widgets/battle/RPGBattleCharacterSlotWidget.h"
-
-#include "Blueprint/UserWidget.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 URPGBattleCharacterStatsComponent::URPGBattleCharacterStatsComponent(const FObjectInitializer& ObjectInitializer)
@@ -62,9 +67,19 @@ bool URPGBattleCharacterStatsComponent::GetBIsDefending()
 	return bIsDefending;
 }
 
+void URPGBattleCharacterStatsComponent::SetBIsDefending(bool InBIsDefending)
+{
+	bIsDefending = InBIsDefending;
+}
+
 TMap<StatsEnum, float> URPGBattleCharacterStatsComponent::GetStats()
 {
 	return Stats;
+}
+
+void URPGBattleCharacterStatsComponent::SetStats(TMap<StatsEnum, float> InStats)
+{
+	Stats = InStats;
 }
 
 TMap<DerivedStatsEnum, float> URPGBattleCharacterStatsComponent::GetDerivedStats()
@@ -72,14 +87,29 @@ TMap<DerivedStatsEnum, float> URPGBattleCharacterStatsComponent::GetDerivedStats
 	return DerivedStats;
 }
 
+void URPGBattleCharacterStatsComponent::SetDerivedStats(TMap<DerivedStatsEnum, float> InDerivedStats)
+{
+	DerivedStats = InDerivedStats;
+}
+
 float URPGBattleCharacterStatsComponent::GetCurrentHP()
 {
 	return CurrentHP;
 }
 
+void URPGBattleCharacterStatsComponent::SetCurrentHP(float InAmount)
+{
+	CurrentHP = InAmount;
+}
+
 float URPGBattleCharacterStatsComponent::GetCurrentMP()
 {
 	return CurrentMP;
+}
+
+void URPGBattleCharacterStatsComponent::SetCurrentMP(float InAmount)
+{
+	CurrentMP = InAmount;
 }
 
 float URPGBattleCharacterStatsComponent::GetCurrentInitiative()

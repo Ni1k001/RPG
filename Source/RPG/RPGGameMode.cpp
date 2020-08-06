@@ -1,8 +1,9 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "RPGGameMode.h"
-#include "RPGCharacter.h"
 #include "UObject/ConstructorHelpers.h"
+
+#include "RPGCharacter.h"
 
 ARPGGameMode::ARPGGameMode()
 {

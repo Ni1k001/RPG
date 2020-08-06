@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPG/RPGCharacter.h"
 #include "UObject/Interface.h"
 #include "RPGInteractionInterface.generated.h"
 
@@ -36,5 +35,5 @@ public:
 		void OnInteractionDisabled();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-		void OnInteractionRequested(ARPGCharacter* InteractiongWorldCharacter);
+		void OnInteractionRequested(class ARPGCharacter* InteractiongWorldCharacter);
 };

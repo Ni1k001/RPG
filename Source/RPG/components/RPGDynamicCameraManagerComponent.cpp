@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include "RPG/battle/RPGDynamicCameraPath.h"
+
 // Sets default values for this component's properties
 URPGDynamicCameraManagerComponent::URPGDynamicCameraManagerComponent()
 {

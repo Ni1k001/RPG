@@ -8,12 +8,6 @@
 #include "RPG/enums/RPGStatTypeEnum.h"
 #include "RPG/enums/RPGActionTypeEnum.h"
 
-#include "RPG/components/RPGBattleManagerComponent.h"
-
-#include "RPG/battle/RPGBattleCharacter.h"
-
-#include "RPG/RPGGameInstance.h"
-
 #include "RPGBattleCharacterStatsComponent.generated.h"
 
 
@@ -65,16 +59,16 @@ private:
 		class URPGBattleCharacterSlotWidget* BattleCharacterSlotRef;
 
 	UPROPERTY()
-		URPGBattleManagerComponent* BattleManagerReference;
+		class URPGBattleManagerComponent* BattleManagerReference;
 
 	UPROPERTY()
 		ActionTypeEnum SelectedActionType;
 
 	UPROPERTY()
-		TArray<ARPGBattleCharacter*> TargetedCharacters;
+		TArray<class ARPGBattleCharacter*> TargetedCharacters;
 
 	UPROPERTY()
-		URPGGameInstance* GameInstance;
+		class URPGGameInstance* GameInstance;
 
 public:
 	UFUNCTION()
@@ -87,16 +81,31 @@ public:
 		bool GetBIsDefending();
 
 	UFUNCTION()
+		void SetBIsDefending(bool InBIsDefending);
+
+	UFUNCTION()
 		TMap<StatsEnum, float> GetStats();
+
+	UFUNCTION()
+		void SetStats(TMap<StatsEnum, float> InStats);
 
 	UFUNCTION()
 		TMap<DerivedStatsEnum, float> GetDerivedStats();
 
 	UFUNCTION()
+		void SetDerivedStats(TMap<DerivedStatsEnum, float> InDerivedStats);
+
+	UFUNCTION()
 		float GetCurrentHP();
 
 	UFUNCTION()
+		void SetCurrentHP(float InAmount);
+
+	UFUNCTION()
 		float GetCurrentMP();
+
+	UFUNCTION()
+		void SetCurrentMP(float InAmount);
 
 	UFUNCTION()
 		float GetCurrentInitiative();
@@ -108,10 +117,10 @@ public:
 		void SetBattleCharacterSlotRef(class URPGBattleCharacterSlotWidget* InBattleCharacterSlotRef);
 
 	UFUNCTION()
-		URPGBattleManagerComponent* GetBattleManagerRef();
+		class URPGBattleManagerComponent* GetBattleManagerRef();
 
 	UFUNCTION()
-		void SetBattleManagerRef(URPGBattleManagerComponent* InBattleManagerReference);
+		void SetBattleManagerRef(class URPGBattleManagerComponent* InBattleManagerReference);
 
 	UFUNCTION()
 		ActionTypeEnum GetSelectedActionType();
@@ -120,10 +129,10 @@ public:
 		void SetSelectedActonType(ActionTypeEnum InSelectedActionType);
 
 	UFUNCTION()
-		TArray<ARPGBattleCharacter*> GetTargetedCharacters();
+		TArray<class ARPGBattleCharacter*> GetTargetedCharacters();
 
 	UFUNCTION()
-		void SetTargetedCharacters(TArray<ARPGBattleCharacter*> InTargetedCharacters);
+		void SetTargetedCharacters(TArray<class ARPGBattleCharacter*> InTargetedCharacters);
 
 	/*				Initialization				*/
 	UFUNCTION()

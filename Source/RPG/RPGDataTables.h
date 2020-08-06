@@ -3,7 +3,12 @@
 #pragma once
 
 #include "Engine/DataTable.h"
+
+#include "RPG/enums/RPGActionTypeEnum.h"
+#include "RPG/enums/RPGItemRarityEnum.h"
+#include "RPG/enums/RPGItemTypeEnum.h"
 #include "RPG/enums/RPGStatTypeEnum.h"
+
 #include "RPGDataTables.generated.h"
 
 USTRUCT(BlueprintType)
@@ -61,4 +66,84 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
         TMap<DerivedStatsEnum, float> DerivedStats;
+
+//    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//      PossibleLoot;
+};
+
+USTRUCT(BlueprintType)
+struct FItemsTable : public FTableRowBase
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FName Name;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FText DisplayName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        ItemTypeEnum ItemType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        ItemRarityEnum ItemRarity;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool bCanBeUsedInBattle;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool bCanBeUsedInInventory;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int32 MaxStackAmount;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int32 BuyValue;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        int32 SellValue;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FText Description;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        TMap<StatsEnum, float> Stats;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        TMap<DerivedStatsEnum, float> DerivedStats;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        class UTexture2D* Icon;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool bCanBeBought;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        bool bCanBeSold;
+};
+
+USTRUCT(BlueprintType)
+struct FActionsTable : public FTableRowBase
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FName Name;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FText DisplayName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FText Description;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        ActionTypeEnum ActionType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        float BaseCostMP;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        float BaseCostHP;
 };

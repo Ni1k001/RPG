@@ -5,9 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Camera/CameraActor.h"
-#include "RPG/battle/RPGDynamicCameraPath.h"
 #include "RPGDynamicCameraManagerComponent.generated.h"
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RPG_API URPGDynamicCameraManagerComponent : public UActorComponent
@@ -37,10 +35,10 @@ private:
 		ACameraActor* Camera;
 
 	UPROPERTY()
-		TMap<FName, ARPGDynamicCameraPath*> DynamicCameraPaths;
+		TMap<FName, class ARPGDynamicCameraPath*> DynamicCameraPaths;
 
 	UPROPERTY()
-		ARPGDynamicCameraPath* ActiveCameraPath;
+		class ARPGDynamicCameraPath* ActiveCameraPath;
 
 	UPROPERTY()
 		float PathDistance;

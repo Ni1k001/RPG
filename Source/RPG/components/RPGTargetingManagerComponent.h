@@ -7,10 +7,6 @@
 
 #include "RPG/enums/RPGTargetingTypeEnum.h"
 
-#include "RPG/battle/RPGBattleCharacter.h"
-
-#include "RPG/RPGGameInstance.h"
-
 #include "RPGTargetingManagerComponent.generated.h"
 
 
@@ -42,10 +38,10 @@ private:
 		TargetingTypeEnum SelectedTargetingType;
 
 	UPROPERTY()
-		TArray<ARPGBattleCharacter*> TargetedCharacters;
+		TArray<class ARPGBattleCharacter*> TargetedCharacters;
 
 	UPROPERTY()
-		URPGGameInstance* GameInstance;
+		class URPGGameInstance* GameInstance;
 
 public:
 	UFUNCTION()
@@ -58,7 +54,7 @@ public:
 		TargetingTypeEnum GetSelectedTargetingType();
 
 	UFUNCTION()
-		TArray<ARPGBattleCharacter*> GetTargetedCharacters();
+		TArray<class ARPGBattleCharacter*> GetTargetedCharacters();
 
 	UFUNCTION()
 		void EnableTargeting(bool InBCanTargetSelf, TargetingTypeEnum InTargetingType);
@@ -67,7 +63,7 @@ public:
 		void DisableTargeting();
 
 	UFUNCTION()
-		void ShowTargets(ARPGBattleCharacter* InIndicatedCharacter);
+		void ShowTargets(class ARPGBattleCharacter* InIndicatedCharacter);
 
 	UFUNCTION()
 		void HideTargets();

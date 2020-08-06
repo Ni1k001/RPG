@@ -6,7 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Components/SplineComponent.h"
 #include "Camera/CameraComponent.h"
+
 #include "RPG/enums/RPGPathTypeEnum.h"
+
 #include "RPGDynamicCameraPath.generated.h"
 
 UCLASS()

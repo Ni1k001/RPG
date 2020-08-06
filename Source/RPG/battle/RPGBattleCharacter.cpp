@@ -7,6 +7,7 @@
 #include "Engine/DataTable.h"
 
 #include "RPG/RPGDataTables.h"
+#include "RPG/RPGGameInstance.h"
 
 #include "RPG/battle/RPGDamagePopUp.h"
 
@@ -28,7 +29,7 @@ ARPGBattleCharacter::ARPGBattleCharacter()
 
 	Target = CreateDefaultSubobject<UBillboardComponent>(TEXT("TargetPointer"));
 	Target->SetRelativeLocation(FVector(0.f, 0.f, 150.f));
-	Target->AttachTo(RootComponent);
+	Target->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -82,6 +83,10 @@ void ARPGBattleCharacter::OnClicked(UPrimitiveComponent* TouchedComponent, FKey 
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan, TEXT("OnClicked"));
 	}
+	
+	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
+
+	UE_LOG(LogTemp, Warning, TEXT("TEST"));
 
 	if (TargetingManagerRef->IsValidLowLevel())
 	{
@@ -312,4 +317,9 @@ void ARPGBattleCharacter::ExecuteMagicAction(FName InMagicName)
 void ARPGBattleCharacter::ExecuteFleeAction()
 {
 
+}
+
+void ARPGBattleCharacter::TestFunc()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AFTER"));
 }

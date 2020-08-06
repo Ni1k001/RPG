@@ -6,10 +6,10 @@
 #include "Engine.h"
 #include "GameFramework/Character.h"
 
+#include "RPG/enums/RPGActionTypeEnum.h"
+
 #include "RPG/interfaces/RPGAnimCommunicationInterface.h"
 #include "RPG/interfaces/RPGBattleCommunicationInterface.h"
-
-#include "RPG/enums/RPGActionTypeEnum.h"
 
 #include "RPGBattleCharacter.generated.h"
 
@@ -57,6 +57,8 @@ private:
 
 	UPROPERTY()
 		bool bIsEnemy;
+
+	void TestFunc();
 
 //	UPROPERTY(VisibleAnywhere)
 

@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+
 #include "RPG/structs/RPGCharacterInfoStruct.h"
 #include "RPG/structs/RPGItemDataStruct.h"
 #include "RPG/structs/RPGPartySlotStruct.h"
+
 #include "RPGGameInstance.generated.h"
 
 /**
@@ -24,11 +26,14 @@ private:
 	UPROPERTY(BlueprintGetter = GetCanSaveGame, BlueprintSetter = SetCanSaveGame, Category = "Default")
 		bool bCanSaveGame;
 
+	UPROPERTY(BlueprintSetter = SetSavePointName, Category = "MapInfo")
+		FName SavePointName;
+
 	/*				INVENTORY MANAGER				*/
 	UPROPERTY(BlueprintGetter = GetGold, BlueprintSetter = SetGold, Category = "InventoryManager")
 		int32 Gold;
 
-	UPROPERTY(BlueprintGetter = GetInventory, BlueprintSetter = SetInventory, Category = "InventoryManager")
+	UPROPERTY(BlueprintGetter = GetInventory, BlueprintSetter = SetInventory, VisibleAnywhere, Category = "InventoryManager")
 		TArray<FItemDataStruct> Inventory;
 
 	/*				CHARACTERS MANAGER				*/
@@ -48,6 +53,15 @@ private:
 	UPROPERTY(BlueprintGetter = GetWorldMapSpawnPointName, BlueprintSetter = SetWorldMapSpawnPointName, Category = "MapInfo")
 		FName WorldMapSpawnPointName;
 
+	UPROPERTY(BlueprintGetter = GetBattleArenaName, BlueprintSetter = SetBattleArenaName, Category = "MapInfo")
+		FName BattleArenaName;
+
+	UPROPERTY(BlueprintGetter = GetAreaName, BlueprintSetter = SetAreaName, Category = "MapInfo")
+		FText AreaName;
+
+	UPROPERTY(BlueprintGetter = GetBSpawningAfterBattle, BlueprintSetter = SetBSpawningAfterBattle, Category = "MapInfo")
+		bool bSpawningAfterBattle;
+
 	UPROPERTY(BlueprintGetter = GetWorldTransformBeforeBattle, BlueprintSetter = SetWorldTransformBeforeBattle, Category = "MapInfo")
 		FTransform WorldTransformBeforeBattle;
 
@@ -56,9 +70,6 @@ private:
 
 	UPROPERTY(BlueprintGetter = GetEnemiesTransformsBeforeBattle, BlueprintSetter = SetEnemiesTransformsBeforeBattle, Category = "MapInfo")
 		TMap<FName, FTransform> EnemiesTransformsBeforeBattle;
-
-	UPROPERTY(BlueprintSetter = SetSavePointName, Category = "MapInfo")
-		FName SavePointName;
 
 	/*				ENCOUNTERS				*/
 	UPROPERTY(BlueprintGetter = GetPossibleEncounters, BlueprintSetter = SetPossibleEncounters, Category = "Encounters")
@@ -132,9 +143,6 @@ public:
 	UFUNCTION(BlueprintSetter, Category = "CharacterManager")
 		void SetCharacters(TMap<FName, FCharacterInfoStruct> InCharacters);
 
-	UFUNCTION(BlueprintCallable, Category = "CharacterManager")
-		void SetCharacter(FCharacterInfoStruct Character, int32 Index);
-
 	/*				TIMER				*/
 	FTimespan* GetTimePlayed();
 
@@ -157,6 +165,24 @@ public:
 
 	UFUNCTION(BlueprintSetter, Category = "MapInfo")
 		void SetWorldMapSpawnPointName(FName InWorldMapSpawnPointName);
+
+	UFUNCTION(BlueprintGetter, Category = "MapInfo")
+		FName GetBattleArenaName();
+
+	UFUNCTION(BlueprintSetter, Category = "MapInfo")
+		void SetBattleArenaName(FName InBattleArenaName);
+
+	UFUNCTION(BlueprintGetter, Category = "MapInfo")
+		FText GetAreaName();
+
+	UFUNCTION(BlueprintSetter, Category = "MapInfo")
+		void SetAreaName(FText InAreaName);
+
+	UFUNCTION(BlueprintGetter, Category = "MapInfo")
+		bool GetBSpawningAfterBattle();
+
+	UFUNCTION(BlueprintSetter, Category = "MapInfo")
+		void SetBSpawningAfterBattle(bool InBSpawningAfterBattle);
 
 	UFUNCTION(BlueprintGetter, Category = "MapInfo")
 		FTransform GetWorldTransformBeforeBattle();

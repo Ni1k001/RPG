@@ -4,6 +4,10 @@
 #include "RPGTargetingManagerComponent.h"
 #include "Components/BillboardComponent.h"
 
+#include "RPG/RPGGameInstance.h"
+
+#include "RPG/battle/RPGBattleCharacter.h"
+
 #include "RPG/components/RPGBattleManagerComponent.h"
 #include "RPG/components/RPGDynamicCameraManagerComponent.h"
 

@@ -1,8 +1,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPG/enums/RPGStatTypeEnum.h"
 #include "Engine/UserDefinedStruct.h"
+#include "Templates/SharedPointer.h"
+
+#include "RPG/enums/RPGItemTypeEnum.h"
+#include "RPG/enums/RPGStatTypeEnum.h"
+
+#include "RPG/structs/RPGBaseItemStruct.h"
+
 #include "RPGCharacterInfoStruct.generated.h"
 
 /**
@@ -39,11 +45,20 @@ struct FCharacterInfoStruct
 		TMap<DerivedStatsEnum, float> DerivedStats;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class ARPGBattleCharacter* BattleCharacterClass;
+
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TMap<ItemTypeEnum, FBaseItemStruct> Equipment;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UTexture2D* Icon;
 
-	//Battle Actor Class
-	//Equipment
 	//Actions
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 ActionPoints;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TMap<FName, int32> CharacterActions;
 
 	FCharacterInfoStruct()
 	{
@@ -80,6 +95,33 @@ struct FCharacterInfoStruct
 		DerivedStats.FindOrAdd(DerivedStatsEnum::ELightResistance, 0);
 		DerivedStats.FindOrAdd(DerivedStatsEnum::EDarkResistance, 0);
 
+		FBaseItemStruct Item;
+
+		Item.Type = ItemTypeEnum::EWeapon;
+		Equipment.FindOrAdd(ItemTypeEnum::EWeapon, Item);
+
+		Item.Type = ItemTypeEnum::EArmor;
+		Equipment.FindOrAdd(ItemTypeEnum::EArmor, Item);
+
+		Item.Type = ItemTypeEnum::EAccessory;
+		Equipment.FindOrAdd(ItemTypeEnum::EAccessory, Item);
+
+		Item.Type = ItemTypeEnum::EConsumable;
+		Equipment.FindOrAdd(ItemTypeEnum::EConsumable, Item);
+
+		Item.Type = ItemTypeEnum::EMiscellaneous;
+		Equipment.FindOrAdd(ItemTypeEnum::EMiscellaneous, Item);
+
+		Item.Type = ItemTypeEnum::EKeyItem;
+		Equipment.FindOrAdd(ItemTypeEnum::EKeyItem, Item);
+
 		//Icon;
+
+		ActionPoints = 0;
+
+		CharacterActions.FindOrAdd("Attack", 1);
+		CharacterActions.FindOrAdd("Defend", 1);
+		CharacterActions.FindOrAdd("Items", 1);
+		CharacterActions.FindOrAdd("Flee", 1);
 	}
 };

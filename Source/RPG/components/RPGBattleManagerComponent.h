@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
-#include "RPG/RPGCharacter.h"
-
 #include "RPG/enums/RPGActionTypeEnum.h"
 
 #include "RPG/structs/RPGItemDataStruct.h"
@@ -35,23 +33,34 @@ private:
 	UPROPERTY(BlueprintGetter = GetRequiredInitiative, BlueprintSetter = SetRequiredInitiative, Category = "Default")
 		float RequiredInitiative;
 
+	//BattleEndScreenRef
+
+	//BattleInterfaceRef
+
+	//BattleEndCharacterSlotsRef
+
+	//SecondaryActionSlotsRef
+
 	UPROPERTY(BlueprintGetter = GetCurrentCharacter, BlueprintSetter = SetCurrentCharacter, Category = "Default")
 		class ARPGBattleCharacter* CurrentCharacter;
 
 	UPROPERTY(BlueprintGetter = GetPlayerCharacters, BlueprintSetter = SetPlayerCharacters, Category = "Default")
-		TArray<ARPGBattleCharacter*> PlayerCharacters;
+		TArray<class ARPGBattleCharacter*> PlayerCharacters;
 
 	UPROPERTY(BlueprintGetter = GetEnemyCharacters, BlueprintSetter = SetEnemyCharacters, Category = "Default")
-		TArray<ARPGBattleCharacter*> EnemyCharacters;
+		TArray<class ARPGBattleCharacter*> EnemyCharacters;
 
 	UPROPERTY()
-		TArray<ARPGBattleCharacter*> DeadPlayerCharacters;
+		TArray<class ARPGBattleCharacter*> DeadPlayerCharacters;
 
 	UPROPERTY()
-		TArray<ARPGBattleCharacter*> DeadEnemyCharacters;
+		TArray<class ARPGBattleCharacter*> DeadEnemyCharacters;
 
-	//TODO
-	//Action
+	UPROPERTY()
+		ActionTypeEnum SelectedAction;
+
+	UPROPERTY()
+		FName SelectedSecondaryAction;
 
 public:
 	/*				DEFAULT				*/
@@ -61,23 +70,49 @@ public:
 	UFUNCTION(BlueprintSetter, Category = "Default")
 		void SetRequiredInitiative(float InRequiredInitiative);
 
-	UFUNCTION(BlueprintGetter, Category = "Default")
-		ARPGBattleCharacter* GetCurrentCharacter();
-
-	UFUNCTION(BlueprintSetter, Category = "Default")
-		void SetCurrentCharacter(ARPGBattleCharacter* InCharacter);
+	//
 
 	UFUNCTION(BlueprintGetter, Category = "Default")
-		TArray<ARPGBattleCharacter*> GetPlayerCharacters();
+		class ARPGBattleCharacter* GetCurrentCharacter();
 
 	UFUNCTION(BlueprintSetter, Category = "Default")
-		void SetPlayerCharacters(TArray<ARPGBattleCharacter*> InPlayerCharacters);
+		void SetCurrentCharacter(class ARPGBattleCharacter* InCharacter);
 
 	UFUNCTION(BlueprintGetter, Category = "Default")
-		TArray<ARPGBattleCharacter*> GetEnemyCharacters();
+		TArray<class ARPGBattleCharacter*> GetPlayerCharacters();
 
 	UFUNCTION(BlueprintSetter, Category = "Default")
-		void SetEnemyCharacters(TArray<ARPGBattleCharacter*> InEnemyCharacters);
+		void SetPlayerCharacters(TArray<class ARPGBattleCharacter*> InPlayerCharacters);
+
+	UFUNCTION(BlueprintGetter, Category = "Default")
+		TArray<class ARPGBattleCharacter*> GetEnemyCharacters();
+
+	UFUNCTION(BlueprintSetter, Category = "Default")
+		void SetEnemyCharacters(TArray<class ARPGBattleCharacter*> InEnemyCharacters);
+
+	UFUNCTION()
+		TArray<class ARPGBattleCharacter*> GetDeadPlayerCharacters();
+
+	UFUNCTION()
+		void SetDeadPlayerCharacters(TArray<class ARPGBattleCharacter*> InDeadPlayerCharacters);
+
+	UFUNCTION()
+		TArray<class ARPGBattleCharacter*> GetDeadEnemyCharacters();
+
+	UFUNCTION()
+		void SetDeadEnemyCharacters(TArray<class ARPGBattleCharacter*> InDeadEnemyCharacters);
+
+	UFUNCTION()
+		ActionTypeEnum GetSelectedAction();
+
+	UFUNCTION()
+		void SetSelectedAction(ActionTypeEnum InSelectedAction);
+
+	UFUNCTION()
+		FName GetSelectedSecondaryAction();
+
+	UFUNCTION()
+		void SetSelectedSecondaryAction(FName InSelectedSecondaryAction);
 
 	/*				PRE BATTLE				*/
 	UFUNCTION(BlueprintCallable)
@@ -101,31 +136,31 @@ public:
 
 	/*				BATTLE IN PROGRESS				*/
 	UFUNCTION(BlueprintCallable)
-		void GetCharacterWithMaxInitiative(bool& OutSuccess, ARPGBattleCharacter*& OutCharacter);
+		void GetCharacterWithMaxInitiative(bool& OutSuccess, class ARPGBattleCharacter*& OutCharacter);
 
 	UFUNCTION()
-		void StartCharacterTurn(ARPGBattleCharacter* InCharacter);
+		void StartCharacterTurn(class ARPGBattleCharacter* InCharacter);
 
 	UFUNCTION()
 		void SelectAction(ActionTypeEnum InActionType);
 
 	UFUNCTION()
-		void RequestActionExecution(TArray<ARPGBattleCharacter*> InTargetedCharacters);
+		void RequestActionExecution(TArray<class ARPGBattleCharacter*> InTargetedCharacters);
 
 	UFUNCTION()
 		void SelectSecondaryAction(FName InSelectedSecondaryAction);
 
 	UFUNCTION()
-		void DisableTargetingAndInput(ARPGBattleCharacter* InEnemy);
+		void DisableTargetingAndInput();
 
 	UFUNCTION()
-		void OnEnemyKilled(ARPGBattleCharacter* InEnemy);
+		void OnEnemyKilled(class ARPGBattleCharacter* InEnemy);
 
 	UFUNCTION()
-		void OnPlayerCharacterKilled(ARPGBattleCharacter* InPlayerCharacter);
+		void OnPlayerCharacterKilled(class ARPGBattleCharacter* InPlayerCharacter);
 
 	UFUNCTION()
-		void OnPlayerCharacterResurrected(ARPGBattleCharacter* InPlayerCharacter);
+		void OnPlayerCharacterResurrected(class ARPGBattleCharacter* InPlayerCharacter);
 
 	UFUNCTION()
 		TArray<FItemDataStruct> GetAllItemsUsableInBattle(TArray<FItemDataStruct> InInventory);
@@ -150,13 +185,13 @@ public:
 		void ReturnToWorldMap();
 
 	UFUNCTION()
-		void RollBattleRewards();
+		void RollBattleRewards(int32& OutExperience, int32& OutGold, TArray<FItemDataStruct>& OutItemsLooted);
 
 	UFUNCTION()
-		void CheckIfAlreadyLootedItem();
+		void CheckIfAlreadyLootedItem(FName InItemName, TArray<FItemDataStruct> InLootedItems, bool& OutBIsAlreadyLooted, int32& OutSlotIndex);
 
 	UFUNCTION()
-		void ReceiveBattleRewards();
+		void ReceiveBattleRewards(int32 InExperience, int32 InGold, TArray<FItemDataStruct> InItemsLooted);
 
 	UFUNCTION()
 		void ShowBattleEndScreen();
@@ -166,4 +201,17 @@ public:
 
 	UFUNCTION()
 		void UpdateBattleEndScreenOnClick();
+
+	/*				BATTLE					*/
+	UFUNCTION()
+		void ResumeBattle();
+
+	UFUNCTION()
+		void AddInitiativeToAllCharacters();
+
+	UFUNCTION()
+		void EndBattle();
+
+	UFUNCTION()
+		void GameOver();
 };

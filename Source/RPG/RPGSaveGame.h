@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+
 #include "RPG/structs/RPGCharacterInfoStruct.h"
 #include "RPG/structs/RPGPartySlotStruct.h"
+
 #include "RPGSaveGame.generated.h"
 
 /**

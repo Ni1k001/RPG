@@ -2,11 +2,12 @@
 
 
 #include "RPGMapTeleportPoint.h"
-#include "RPG/RPGCharacter.h"
-#include "RPG/RPGGameInstance.h"
 #include "Engine/CollisionProfile.h"
 #include "Components/BoxComponent.h"
 #include "Components/TextRenderComponent.h"
+
+#include "RPG/RPGGameInstance.h"
+#include "RPG/RPGCharacter.h"
 
 // Sets default values
 ARPGMapTeleportPoint::ARPGMapTeleportPoint()
@@ -27,7 +28,7 @@ ARPGMapTeleportPoint::ARPGMapTeleportPoint()
 
 	RootComponent = TeleportArea;
 
-	//TeleportArea->OnComponentBeginOverlap.AddDynamic(this, &ARPGMapTeleportPoint::OnActorBeginOverlap);
+	TeleportArea->OnComponentBeginOverlap.AddDynamic(this, &ARPGMapTeleportPoint::OnActorBeginOverlap);
 
 	TextComponent = CreateEditorOnlyDefaultSubobject<UTextRenderComponent>(TEXT("Text"));
 	if (TextComponent)

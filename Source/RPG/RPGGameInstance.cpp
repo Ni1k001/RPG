@@ -2,11 +2,14 @@
 
 
 #include "RPGGameInstance.h"
-#include "RPGSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Engine.h"
+
 #include "RPG/RPGCharacter.h"
+#include "RPG/RPGDataTables.h"
+#include "RPG/RPGSaveGame.h"
+
 #include "RPG/world/RPGSavePoint.h"
 
 /*				DEFAULT				*/
@@ -15,6 +18,7 @@ void URPGGameInstance::Init()
 	UGameInstance::Init();
 	TimePlayed = new FTimespan(0,0,0,0,0);
 	bCanSaveGame = false;
+	BattleArenaName = "None";
 }
 
 void URPGGameInstance::OnStart()
@@ -45,6 +49,11 @@ bool URPGGameInstance::GetCanSaveGame()
 void URPGGameInstance::SetCanSaveGame(bool InBCanSaveGame)
 {
 	bCanSaveGame = InBCanSaveGame;
+}
+
+FName URPGGameInstance::GetSavePointName()
+{
+	return SavePointName;
 }
 
 	/*				SAVED DATA				*/
@@ -172,11 +181,6 @@ void URPGGameInstance::SetCharacters(TMap<FName, FCharacterInfoStruct> InCharact
 	Characters = InCharacters;
 }
 
-void URPGGameInstance::SetCharacter(FCharacterInfoStruct InCharacter, int32 InIndex)
-{
-	Characters.FindOrAdd(InCharacter.Name, InCharacter);
-}
-
 /*				TIMER				*/
 FTimespan* URPGGameInstance::GetTimePlayed()
 {
@@ -227,6 +231,36 @@ void URPGGameInstance::SetWorldMapSpawnPointName(FName InWorldMapSpawnPointName)
 	WorldMapSpawnPointName = InWorldMapSpawnPointName;
 }
 
+FName URPGGameInstance::GetBattleArenaName()
+{
+	return BattleArenaName;
+}
+
+void URPGGameInstance::SetBattleArenaName(FName InBattleArenaName)
+{
+	BattleArenaName = InBattleArenaName;
+}
+
+FText URPGGameInstance::GetAreaName()
+{
+	return AreaName;
+}
+
+void URPGGameInstance::SetAreaName(FText InAreaName)
+{
+	AreaName = InAreaName;
+}
+
+bool URPGGameInstance::GetBSpawningAfterBattle()
+{
+	return bSpawningAfterBattle;
+}
+
+void URPGGameInstance::SetBSpawningAfterBattle(bool InBSpawningAfterBattle)
+{
+	bSpawningAfterBattle = InBSpawningAfterBattle;
+}
+
 FTransform URPGGameInstance::GetWorldTransformBeforeBattle()
 {
 	return WorldTransformBeforeBattle;
@@ -255,11 +289,6 @@ TMap<FName, FTransform> URPGGameInstance::GetEnemiesTransformsBeforeBattle()
 void URPGGameInstance::SetEnemiesTransformsBeforeBattle(TMap<FName, FTransform> InEnemiesTransformsBeforeBattle)
 {
 	EnemiesTransformsBeforeBattle = InEnemiesTransformsBeforeBattle;
-}
-
-FName URPGGameInstance::GetSavePointName()
-{
-	return SavePointName;
 }
 
 void URPGGameInstance::SetSavePointName(FName InSavePointName)

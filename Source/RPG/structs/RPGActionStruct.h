@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RPG/enums/RPGActionTypeEnum.h"
 #include "Engine/UserDefinedStruct.h"
+
+#include "RPG/enums/RPGActionTypeEnum.h"
+
 #include "RPGActionStruct.generated.h"
 
 /**

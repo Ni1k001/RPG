@@ -2,7 +2,9 @@
 
 
 #include "RPGBattleManagerComponent.h"
+#include "Kismet/GameplayStatics.h"
 
+#include "RPG/RPGCharacter.h"
 #include "RPG/RPGDataTables.h"
 #include "RPG/RPGGameInstance.h"
 
@@ -10,12 +12,12 @@
 #include "RPG/battle/RPGCharacterBattleSpot.h"
 #include "RPG/battle/RPGEnemyBattleSpot.h"
 
-#include "RPG/components/RPGTargetingManagerComponent.h"
 #include "RPG/components/RPGBattleCharacterStatsComponent.h"
+#include "RPG/components/RPGCharactersManagerComponent.h"
+#include "RPG/components/RPGDynamicCameraManagerComponent.h"
+#include "RPG/components/RPGTargetingManagerComponent.h"
 
 #include "RPG/widgets/battle/RPGBattleCharacterSlotWidget.h"
-
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 URPGBattleManagerComponent::URPGBattleManagerComponent()
@@ -55,6 +57,8 @@ void URPGBattleManagerComponent::SetRequiredInitiative(float InRequiredInitiativ
 	RequiredInitiative = InRequiredInitiative;
 }
 
+//
+
 ARPGBattleCharacter* URPGBattleManagerComponent::GetCurrentCharacter()
 {
 	return CurrentCharacter;
@@ -85,8 +89,48 @@ void URPGBattleManagerComponent::SetEnemyCharacters(TArray<ARPGBattleCharacter*>
 	EnemyCharacters = InEnemyCharacters;
 }
 
+TArray<ARPGBattleCharacter*> URPGBattleManagerComponent::GetDeadPlayerCharacters()
+{
+	return DeadPlayerCharacters;
+}
+
+void URPGBattleManagerComponent::SetDeadPlayerCharacters(TArray<ARPGBattleCharacter*> InDeadPlayerCharacters)
+{
+	DeadPlayerCharacters = InDeadPlayerCharacters;
+}
+
+TArray<ARPGBattleCharacter*> URPGBattleManagerComponent::GetDeadEnemyCharacters()
+{
+	return DeadEnemyCharacters;
+}
+
+void URPGBattleManagerComponent::SetDeadEnemyCharacters(TArray<ARPGBattleCharacter*> InDeadEnemyCharacters)
+{
+	DeadEnemyCharacters = InDeadEnemyCharacters;
+}
+
+ActionTypeEnum URPGBattleManagerComponent::GetSelectedAction()
+{
+	return SelectedAction;
+}
+
+void URPGBattleManagerComponent::SetSelectedAction(ActionTypeEnum InSelectedAction)
+{
+	SelectedAction = InSelectedAction;
+}
+
+FName URPGBattleManagerComponent::GetSelectedSecondaryAction()
+{
+	return SelectedSecondaryAction;
+}
+
+void URPGBattleManagerComponent::SetSelectedSecondaryAction(FName InSelectedSecondaryAction)
+{
+	SelectedSecondaryAction = InSelectedSecondaryAction;
+}
+
 /*				PRE BATTLE				*/
-void URPGBattleManagerComponent::EncounteredEnemies(FName InEncounterName, FName InBattleMapName)
+void URPGBattleManagerComponent::EncounteredEnemies(FName InEncounterName, FName InBattleMapName) //DONE
 {
 	FSoftObjectPath DataTableLoader = TEXT("/Game/DataTables/EncountersDataTable.EncountersDataTable");
 	UDataTable* DataTable = Cast<UDataTable>(DataTableLoader.TryLoad());
@@ -99,39 +143,41 @@ void URPGBattleManagerComponent::EncounteredEnemies(FName InEncounterName, FName
 	}
 }
 
-void URPGBattleManagerComponent::OpenBattleMap(FName InBattleMapName, TMap<int32, FName> InEncounteredEnemies)
+void URPGBattleManagerComponent::OpenBattleMap(FName InBattleMapName, TMap<int32, FName> InEncounteredEnemies) //?
 {
 	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
 	GI->SetEncounteredEnemies(InEncounteredEnemies);
 	GI->SetWorldTransformBeforeBattle(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorTransform());
 	GI->SetCameraRotationBeforeBattle(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetControlRotation());
 	GI->SetEnemiesTransformsBeforeBattle(GetWorldEnemiesTransforms());
+	GI->SetBattleArenaName(InBattleMapName);
 
 	FLatentActionInfo LatentInfo;
 
 	UGameplayStatics::GetStreamingLevel(GetWorld(), GI->GetWorldMapName())->SetShouldBeVisible(false);
 	UGameplayStatics::LoadStreamLevel(GetWorld(), InBattleMapName, false, false, LatentInfo);
-	UGameplayStatics::UnloadStreamLevel(GetWorld(), GI->GetWorldMapName(), LatentInfo, false);
+	UGameplayStatics::UnloadStreamLevel(GetWorld(), GI->GetWorldMapName(), LatentInfo, true);
 	UGameplayStatics::GetStreamingLevel(GetWorld(), InBattleMapName)->SetShouldBeVisible(true);
 }
 
-TMap<FName, FTransform> URPGBattleManagerComponent::GetWorldEnemiesTransforms()
+TMap<FName, FTransform> URPGBattleManagerComponent::GetWorldEnemiesTransforms() //TODO
 {
 	TMap<FName, FTransform> EnemiesTransforms;
 
 	for (TActorIterator<ARPGCharacter> It(GetWorld(), ARPGCharacter::StaticClass()); It; ++It)
 	{
 		ARPGCharacter* Actor = Cast<ARPGCharacter>(*It);
-		if (Actor && !Actor->IsPendingKill())
+		//if (Actor && !Actor->IsPendingKill())
+		if (Actor)
 		{
-			EnemiesTransforms.FindOrAdd(Actor->GetFName(), Actor->GetActorTransform()); //Change ARPGCharacter to EnemyCharacter + get proper name
+			EnemiesTransforms.Add(Actor->GetFName(), Actor->GetActorTransform()); //Change ARPGCharacter to EnemyCharacter + get proper name
 		}
 	}
 	return EnemiesTransforms;
 }
 
 /*				BATTLE INITIALIZATION				*/
-void URPGBattleManagerComponent::SpawnPlayerTeam()
+void URPGBattleManagerComponent::SpawnPlayerTeam() //DONE
 {
 	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
  
@@ -172,37 +218,41 @@ void URPGBattleManagerComponent::SpawnPlayerTeam()
 	}
 }
 
-void URPGBattleManagerComponent::SpawnEnemyTeam()
+void URPGBattleManagerComponent::SpawnEnemyTeam() //DONE
 {
 	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
 
 	for (int i = 0; i < GI->GetEncounteredEnemies().Num(); i++)
 	{
-		//Datatable
-//		GI->GetEncounteredEnemies().Find(i);
-
-		FTransform SpawnTransform = GetBattleSpawnPointTransform(true, i);
-
-		ARPGBattleCharacter* Character = Cast<ARPGBattleCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ARPGBattleCharacter::StaticClass(), SpawnTransform));
-
-		if (Character)
+		FSoftObjectPath DataTableLoader = TEXT("/Game/DataTables/EnemiesDataTable.EnemiesDataTable");
+		UDataTable* DataTable = Cast<UDataTable>(DataTableLoader.TryLoad());
+		FString ContextString;
+		if (DataTable)
 		{
-			Character->SetBIsControlledByAI(true);
-			Character->SetBattleManager(this);
-			Character->SetBIsEnemy(true);
-			Character->SetTargetingManager(Cast<URPGTargetingManagerComponent>(GetOwner()->GetComponentByClass(URPGTargetingManagerComponent::StaticClass())));
+			FEnemiesTable* row = DataTable->FindRow<FEnemiesTable>(GI->GetEncounteredEnemies().FindRef(i), ContextString);
+			FTransform SpawnTransform = GetBattleSpawnPointTransform(true, i);
 
-			UGameplayStatics::FinishSpawningActor(Character, SpawnTransform);
+			ARPGBattleCharacter* Character = Cast<ARPGBattleCharacter>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ARPGBattleCharacter::StaticClass(), SpawnTransform));
 
-			Character->GetCharacterStats()->SetBattleManagerRef(this);
-//			Character->GetCharacterStats()->SetCharacterData();
+			if (Character)
+			{
+				Character->SetBIsControlledByAI(true);
+				Character->SetBattleManager(this);
+				Character->SetBIsEnemy(true);
+				Character->SetTargetingManager(Cast<URPGTargetingManagerComponent>(GetOwner()->GetComponentByClass(URPGTargetingManagerComponent::StaticClass())));
 
-			EnemyCharacters.Add(Character);
+				UGameplayStatics::FinishSpawningActor(Character, SpawnTransform);
+
+				Character->GetCharacterStats()->SetBattleManagerRef(this);
+				Character->GetCharacterStats()->SetCharacterData(row->DisplayName, row->Stats, row->DerivedStats, *row->Stats.Find(StatsEnum::EHP), *row->Stats.Find(StatsEnum::EMP));
+
+				EnemyCharacters.Add(Character);
+			}
 		}
 	}
 }
 
-FTransform URPGBattleManagerComponent::GetBattleSpawnPointTransform(bool bEnemySpot, int32 SpotIndex)
+FTransform URPGBattleManagerComponent::GetBattleSpawnPointTransform(bool bEnemySpot, int32 SpotIndex) //DONE
 {
 	if (bEnemySpot)
 	{
@@ -237,88 +287,182 @@ FTransform URPGBattleManagerComponent::GetBattleSpawnPointTransform(bool bEnemyS
 }
 
 /*				BATTLE IN PROGRESS				*/
-void URPGBattleManagerComponent::GetCharacterWithMaxInitiative(bool& Success, ARPGBattleCharacter*& Character)
+void URPGBattleManagerComponent::GetCharacterWithMaxInitiative(bool& bOutSuccess, ARPGBattleCharacter*& OutCharacter) //DONE
 {
-	//TODO
-	Character = GetCurrentCharacter();
+	OutCharacter = GetCurrentCharacter();
 
-	/*for each (ACharacter* PlayerCharacter in PlayerCharacters)
+	for (int i = 0; i < PlayerCharacters.Num(); i++)
 	{
-
+		if (PlayerCharacters[i]->GetCharacterStats()->GetCurrentInitiative() >= RequiredInitiative)
+		{
+			bOutSuccess = true;
+			OutCharacter = PlayerCharacters[i];
+			return;
+		}
 	}
-
-	for each (ACharacter* EnemyCharacter in EnemyCharacters)
+	
+	for (int i = 0; i < EnemyCharacters.Num(); i++)
 	{
+		if (EnemyCharacters[i]->GetCharacterStats()->GetCurrentInitiative() >= RequiredInitiative)
+		{
+			bOutSuccess = true;
+			OutCharacter = EnemyCharacters[i];
+			return;
+		}
+	}
+}
 
-	}*/
+void URPGBattleManagerComponent::StartCharacterTurn(ARPGBattleCharacter* InCharacter) //TODO
+{
+	CurrentCharacter = InCharacter;
 
-	if (Character)
-		Success = true;
+	if (!CurrentCharacter->GetBIsControlledByAI())
+	{
+		CurrentCharacter->GetCharacterStats()->SetBIsDefending(false);
+		
+		Cast<URPGDynamicCameraManagerComponent>(GetOwner()->GetComponentByClass(URPGDynamicCameraManagerComponent::StaticClass()))->SetNewDynamicPath("Ally_General", true, true, true, CurrentCharacter->GetActorLocation());
+	
+		if (CurrentCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->IsValidLowLevel())
+		{
+			CurrentCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->HighlightSlot();
+			//CurrentCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->
+			
+			//Gamepad
+		}
+	}
 	else
-		Success = false;
+	{
+		//CurrentCharacter->PerformActionByAI();
+	}
 }
 
-void URPGBattleManagerComponent::StartCharacterTurn(ARPGBattleCharacter* InCharacter)
+void URPGBattleManagerComponent::SelectAction(ActionTypeEnum InActionType) //TODO
 {
+	SelectedAction = InActionType;
 
+	switch (InActionType)
+	{
+	case ActionTypeEnum::EAttack:
+	case ActionTypeEnum::EDefend:
+	case ActionTypeEnum::EFlee:
+//		IsValid(GetOwner()->GetComponentByClass())
+		break;
+	case ActionTypeEnum::EItems:
+		CurrentCharacter->GetCharacterStats()->SetSelectedActonType(InActionType);
+		//
+		break;
+	case ActionTypeEnum::EMagic:
+		CurrentCharacter->GetCharacterStats()->SetSelectedActonType(InActionType);
+		//
+		break;
+	default:
+		break;
+	}
 }
 
-void URPGBattleManagerComponent::SelectAction(ActionTypeEnum InActionType)
+void URPGBattleManagerComponent::RequestActionExecution(TArray<ARPGBattleCharacter*> InTargetedCharacters) //DONE
 {
+	CurrentCharacter->GetCharacterStats()->SetTargetedCharacters(InTargetedCharacters);
 
+	CurrentCharacter->ExecuteAction(SelectedAction, SelectedSecondaryAction);
+
+	DisableTargetingAndInput();
 }
 
-void URPGBattleManagerComponent::RequestActionExecution(TArray<ARPGBattleCharacter*> InTargetedCharacters)
+void URPGBattleManagerComponent::SelectSecondaryAction(FName InSelectedSecondaryAction) //TODO
 {
+	SelectedSecondaryAction = InSelectedSecondaryAction;
 
+	//if (IsValid(GetOwner()->))
 }
 
-void URPGBattleManagerComponent::SelectSecondaryAction(FName InSelectedSecondaryAction)
+void URPGBattleManagerComponent::DisableTargetingAndInput() //DONE
 {
-
+	if (IsValid(GetOwner()->GetComponentByClass(URPGTargetingManagerComponent::StaticClass())))
+	{
+		URPGTargetingManagerComponent* TMC = Cast<URPGTargetingManagerComponent>(GetOwner()->GetComponentByClass(URPGTargetingManagerComponent::StaticClass()));
+		
+		TMC->DisableTargeting();
+		TMC->HideTargets();
+	}
 }
 
-void URPGBattleManagerComponent::DisableTargetingAndInput(ARPGBattleCharacter* InEnemy)
+void URPGBattleManagerComponent::OnEnemyKilled(ARPGBattleCharacter* InEnemy) //DONE
 {
+	InEnemy->GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
 
+	EnemyCharacters.Remove(InEnemy);
+	DeadEnemyCharacters.Add(InEnemy);
+
+	if (EnemyCharacters.Num() == 0)
+		EndBattle();
 }
 
-void URPGBattleManagerComponent::OnEnemyKilled(ARPGBattleCharacter* InEnemy)
+void URPGBattleManagerComponent::OnPlayerCharacterKilled(ARPGBattleCharacter* InPlayerCharacter) //DONE
 {
+	PlayerCharacters.Remove(InPlayerCharacter);
+	DeadPlayerCharacters.Add(InPlayerCharacter);
 
+	InPlayerCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->DarkenSlotOnDeath();
+
+	if (PlayerCharacters.Num() == 0)
+		GameOver();
 }
 
-void URPGBattleManagerComponent::OnPlayerCharacterKilled(ARPGBattleCharacter* InPlayerCharacter)
+void URPGBattleManagerComponent::OnPlayerCharacterResurrected(ARPGBattleCharacter* InPlayerCharacter) //TODO
 {
+	DeadPlayerCharacters.Remove(InPlayerCharacter);
+	PlayerCharacters.Add(InPlayerCharacter);
 
+	InPlayerCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->RestoreSlotOnResurrection();
 }
 
-void URPGBattleManagerComponent::OnPlayerCharacterResurrected(ARPGBattleCharacter* InPlayerCharacter)
-{
-
-}
-
-TArray<FItemDataStruct> URPGBattleManagerComponent::GetAllItemsUsableInBattle(TArray<FItemDataStruct> InInventory)
+TArray<FItemDataStruct> URPGBattleManagerComponent::GetAllItemsUsableInBattle(TArray<FItemDataStruct> InInventory) //TODO
 {
 	return InInventory;
+
+	TArray<FName> AddedItems;
+	for (int i = 0; i < InInventory.Num(); i++)
+	{
+		if (InInventory[i].BaseItemData.bCanBeUsedInBattle)
+		{
+			if (!AddedItems.Contains(InInventory[i].BaseItemData.ItemName))
+			{
+				AddedItems.Add(InInventory[i].BaseItemData.ItemName);
+
+				//GetOwner()->GetComponentByClass();
+			}
+		}
+	}
 }
 
-void URPGBattleManagerComponent::EndCharacterTurn(float InUsedInitiative)
+void URPGBattleManagerComponent::EndCharacterTurn(float InUsedInitiative) //TODO
+{
+	CurrentCharacter->GetCharacterStats()->RemoveInitiative(InUsedInitiative);
+	
+	HideActionWidget();
+
+	if (CurrentCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->IsValidLowLevel())
+	{
+		CurrentCharacter->GetCharacterStats()->GetBattleCharacterSlotRef()->UnhighlightSlot();
+
+		//
+
+		Cast<URPGDynamicCameraManagerComponent>(GetOwner()->GetComponentByClass(URPGDynamicCameraManagerComponent::StaticClass()))->SetNewDynamicPath("Overview", true, true, false, FVector(0.f, 0.f, 0.f));
+	}
+}
+
+void URPGBattleManagerComponent::ShowActionWidget() //TODO
 {
 
 }
 
-void URPGBattleManagerComponent::ShowActionWidget()
+void URPGBattleManagerComponent::HideActionWidget() //TODO
 {
 
 }
 
-void URPGBattleManagerComponent::HideActionWidget()
-{
-
-}
-
-void URPGBattleManagerComponent::ShowBattleTooltip(FText InTooltipText)
+void URPGBattleManagerComponent::ShowBattleTooltip(FText InTooltipText) //TODO
 {
 
 }
@@ -326,9 +470,39 @@ void URPGBattleManagerComponent::ShowBattleTooltip(FText InTooltipText)
 //		 GetProperSecondaryActionSlotWidget(int32 InSlotIndex);
 
 /*				BATTLE END				*/
-void URPGBattleManagerComponent::ReturnToWorldMap()
+void URPGBattleManagerComponent::ReturnToWorldMap() //DONE
 {
 	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
+	
+	TMap<FName, FCharacterInfoStruct> Characters = GI->GetCharacters();
+
+
+	for (int i = 0; i < PlayerCharacters.Num(); i++)
+	{
+		FCharacterInfoStruct* CIS = Characters.Find(PlayerCharacters[i]->GetCharacterStats()->GetHardcodedName());
+
+		CIS->CurrentHP = PlayerCharacters[i]->GetCharacterStats()->GetCurrentHP();
+		CIS->CurrentMP = PlayerCharacters[i]->GetCharacterStats()->GetCurrentMP();
+
+		Characters.Add(CIS->Name, *CIS);
+
+		GI->SetCharacters(Characters);
+	}
+
+	for (int i = 0; i < DeadPlayerCharacters.Num(); i++)
+	{
+		FCharacterInfoStruct* CIS = Characters.Find(DeadPlayerCharacters[i]->GetCharacterStats()->GetHardcodedName());
+
+		CIS->CurrentHP = DeadPlayerCharacters[i]->GetCharacterStats()->GetCurrentHP();
+		CIS->CurrentMP = DeadPlayerCharacters[i]->GetCharacterStats()->GetCurrentMP();
+
+		Characters.Add(CIS->Name, *CIS);
+
+		GI->SetCharacters(Characters);
+	}
+
+	GI->SetBSpawningAfterBattle(true);
+
 	FName BattleMapName;
 	FLatentActionInfo LatentInfo;
 	auto strlvl = GetWorld()->GetStreamingLevels();
@@ -342,46 +516,129 @@ void URPGBattleManagerComponent::ReturnToWorldMap()
 	}
 
 	UGameplayStatics::GetStreamingLevel(GetWorld(), BattleMapName)->SetShouldBeVisible(false);
-	UGameplayStatics::LoadStreamLevel(GetWorld(), GI->GetWorldMapName(), false, false, LatentInfo);
 	UGameplayStatics::UnloadStreamLevel(GetWorld(), BattleMapName, LatentInfo, false);
+	UGameplayStatics::LoadStreamLevel(GetWorld(), GI->GetWorldMapName(), false, false, LatentInfo);
 	UGameplayStatics::GetStreamingLevel(GetWorld(), GI->GetWorldMapName())->SetShouldBeVisible(true);
 
 	ARPGCharacter* Player = Cast<ARPGCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 
 	if (Player)
 	{
-
 		Player->GetMovementComponent()->StopMovementImmediately();
 		Player->SetActorTransform(GI->GetWorldTransformBeforeBattle());
 	}
+
+	GI->SetBattleArenaName("None");
 }
 
-void URPGBattleManagerComponent::RollBattleRewards()
+void URPGBattleManagerComponent::RollBattleRewards(int32& OutExperience, int32& OutGold, TArray<FItemDataStruct>& OutItemsLooted) //TODO
+{
+	URPGGameInstance* GI = Cast<URPGGameInstance>(GetWorld()->GetGameInstance());
+
+	int32 Exp = 0;
+	int32 Gold = 0;
+	TArray<FItemDataStruct> Items;
+
+	FSoftObjectPath DataTableLoader = TEXT("/Game/DataTables/EnemiesDataTable.EnemiesDataTable");
+	UDataTable* DataTable = Cast<UDataTable>(DataTableLoader.TryLoad());
+	FString ContextString;
+	if (DataTable)
+	{
+		for (int i = 0; i < DeadEnemyCharacters.Num(); i++)
+		{
+			FEnemiesTable* row = DataTable->FindRow<FEnemiesTable>(DeadEnemyCharacters[i]->GetCharacterStats()->GetHardcodedName(), ContextString);
+
+			Exp += row->ExperienceReward;
+			Gold += row->GoldReward;
+
+			//Loot
+		}
+
+		OutExperience = Exp;
+		OutGold = Gold;
+		OutItemsLooted = Items;
+	}
+}
+
+void URPGBattleManagerComponent::CheckIfAlreadyLootedItem(FName InItemName, TArray<FItemDataStruct> InLootedItems, bool& OutBIsAlreadyLooted, int32& OutSlotIndex) //DONE
+{
+	for (int i = 0; i < InLootedItems.Num(); i++)
+	{
+		if (InItemName == InLootedItems[i].BaseItemData.ItemName)
+		{
+			OutBIsAlreadyLooted = true;
+			OutSlotIndex = i;
+			break;
+		}
+	}
+}
+
+void URPGBattleManagerComponent::ReceiveBattleRewards(int32 InExperience, int32 InGold, TArray<FItemDataStruct> InItemsLooted)// TODO
+{
+	for (int i = 0; PlayerCharacters.Num(); i++)
+	{
+		//Cast<URPGCharactersManagerComponent>(GetOwner()->GetComponentByClass(URPGCharactersManagerComponent::StaticClass()))
+		PlayerCharacters[i]->GetCharacterStats()->GetHardcodedName();
+	}
+
+	//InventoryManager AddGold AddItems
+}
+
+void URPGBattleManagerComponent::ShowBattleEndScreen() //TODO
 {
 
 }
 
-void URPGBattleManagerComponent::CheckIfAlreadyLootedItem()
+void URPGBattleManagerComponent::CreateBattleInterface() //TODO
 {
 
 }
 
-void URPGBattleManagerComponent::ReceiveBattleRewards()
+void URPGBattleManagerComponent::UpdateBattleEndScreenOnClick() //TODO
 {
 
 }
 
-void URPGBattleManagerComponent::ShowBattleEndScreen()
+/*				BATTLE					*/
+void URPGBattleManagerComponent::ResumeBattle() //DONE
 {
-
+	AddInitiativeToAllCharacters();
 }
 
-void URPGBattleManagerComponent::CreateBattleInterface()
+void URPGBattleManagerComponent::AddInitiativeToAllCharacters() //DONE?
 {
+	if (PlayerCharacters.Num() > 0 && EnemyCharacters.Num() > 0)
+	{
+		bool bIsSuccess;
+		ARPGBattleCharacter* Character;
 
+		GetCharacterWithMaxInitiative(bIsSuccess, Character);
+
+		if (bIsSuccess)
+		{
+			StartCharacterTurn(Character);
+		}
+		else
+		{
+			for (int i = 0; i < PlayerCharacters.Num(); i++)
+				PlayerCharacters[i]->GetCharacterStats()->AddInitiative(0.f);
+
+			for (int i = 0; i < EnemyCharacters.Num(); i++)
+				EnemyCharacters[i]->GetCharacterStats()->AddInitiative(0.f);
+
+			AddInitiativeToAllCharacters();
+		}
+	}
 }
 
-void URPGBattleManagerComponent::UpdateBattleEndScreenOnClick()
+void URPGBattleManagerComponent::EndBattle() //TODO?
+{
+	ShowBattleEndScreen();
+
+	//Gamepad
+}
+
+void URPGBattleManagerComponent::GameOver() //TODO
 {
 
 }

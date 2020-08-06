@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/UserDefinedStruct.h"
+#include "Engine/Texture2D.h"
+
 #include "RPG/enums/RPGItemTypeEnum.h"
 #include "RPG/enums/RPGItemRarityEnum.h"
 #include "RPG/enums/RPGStatTypeEnum.h"
-#include "Engine/UserDefinedStruct.h"
+
 #include "RPGBaseItemStruct.generated.h"
 
 /**
@@ -55,14 +58,20 @@ struct FBaseItemStruct
 		TMap<DerivedStatsEnum, float> DerivedStats;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UTexture2D* Icon;
+		UTexture2D* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bCanBeBought;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool bCanBeSold;
 
 	FBaseItemStruct()
 	{
-		ItemName = "";
+		ItemName = "None";
 		DisplayName = FText::FromString("");
 
-		Type = ItemTypeEnum::EMeleeWeapon;
+		Type = ItemTypeEnum::EWeapon;
 		Rarity = ItemRarityEnum::ECommon;
 		bCanBeUsedInBattle = false;
 		bCanBeUsedInInventory = false;
@@ -99,5 +108,20 @@ struct FBaseItemStruct
 		Description = FText::FromString("");
 
 		//Icon;
+	}
+
+	FORCEINLINE bool operator==(const FBaseItemStruct& Other) const
+	{
+		return (ItemName == Other.ItemName);
+	}
+
+	FORCEINLINE bool operator!=(const FBaseItemStruct& Other) const
+	{
+		return !(*this == Other);
+	}
+
+	FORCEINLINE friend uint32 GetTypeHash(const FBaseItemStruct& Other)
+	{
+		return GetTypeHash(Other.ItemName);
 	}
 };

@@ -2,11 +2,11 @@
 
 
 #include "RPGCustomFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/DataTable.h"
-#include "RPG/RPGDataTables.h"
+
 #include "RPG/RPGGameInstance.h"
 #include "RPG/RPGCharacter.h"
-#include "Kismet/GameplayStatics.h"
 
 	/*				Conversion				*/
 FText URPGCustomFunctionLibrary::ActionTypeToText(ActionTypeEnum InActionType)
@@ -50,14 +50,11 @@ FText URPGCustomFunctionLibrary::ItemTypeToText(ItemTypeEnum InItemType)
 	case ItemTypeEnum::EKeyItem:
 		return FText::FromString("Key Item");
 		break;
-	case ItemTypeEnum::EMeleeWeapon:
-		return FText::FromString("Melee Weapon");
-		break;
 	case ItemTypeEnum::EMiscellaneous:
 		return FText::FromString("Miscellaneous");
 		break;
-	case ItemTypeEnum::ERangedWeapon:
-		return FText::FromString("Ranged Weapon");
+	case ItemTypeEnum::EWeapon:
+		return FText::FromString("Weapon");
 		break;
 	default:
 		return FText::FromString("");
@@ -69,6 +66,25 @@ FText URPGCustomFunctionLibrary::ItemTypeToText(ItemTypeEnum InItemType)
 //{
 //  
 //}
+
+FText URPGCustomFunctionLibrary::ItemSubtypeToText(ItemSubtypeEnum InItemSubtype)
+{
+	switch (InItemSubtype)
+	{
+	case ItemSubtypeEnum::ENone:
+		return FText::FromString("None");
+		break;
+	case ItemSubtypeEnum::EMeleeWeapon:
+		return FText::FromString("Melee Weapon");
+		break;
+	case ItemSubtypeEnum::ERangedWeapon:
+		return FText::FromString("Ranged Weapon");
+		break;
+	default:
+		return FText::FromString("");
+		break;
+	}
+}
 
 FText URPGCustomFunctionLibrary::ItemRarityToText(ItemRarityEnum InItemRarity)
 {
@@ -92,7 +108,7 @@ FText URPGCustomFunctionLibrary::ItemRarityToText(ItemRarityEnum InItemRarity)
 	}
 }
 
-FColor URPGCustomFunctionLibrary::ItemRarityToColor(ItemRarityEnum InItemRarity)
+FLinearColor URPGCustomFunctionLibrary::ItemRarityToColor(ItemRarityEnum InItemRarity)
 {
 	switch (InItemRarity)
 	{
@@ -272,4 +288,26 @@ FText URPGCustomFunctionLibrary::GetActionDisplayName(FName InActionName)
 FText URPGCustomFunctionLibrary::GetItemDisplayName(FName InItemName)
 {
 	return FText::FromString("");
+}
+
+FBaseItemStruct URPGCustomFunctionLibrary::GetItemFromDataTable(FItemsTable InItem)
+{
+	FBaseItemStruct Item;
+
+	Item.ItemName = InItem.Name;
+	Item.DisplayName = InItem.DisplayName;
+	Item.Type = InItem.ItemType;
+	Item.Rarity = InItem.ItemRarity;
+	Item.bCanBeUsedInBattle = InItem.bCanBeUsedInBattle;
+	Item.bCanBeUsedInInventory = InItem.bCanBeUsedInInventory;
+	Item.MaxStackAmount = InItem.MaxStackAmount;
+	Item.BuyValue = InItem.BuyValue;
+	Item.SellValue = InItem.SellValue;
+	Item.Stats = InItem.Stats;
+	Item.DerivedStats = InItem.DerivedStats;
+	Item.Icon = InItem.Icon;
+	Item.bCanBeBought = InItem.bCanBeBought;
+	Item.bCanBeSold = InItem.bCanBeSold;
+
+	return Item;
 }

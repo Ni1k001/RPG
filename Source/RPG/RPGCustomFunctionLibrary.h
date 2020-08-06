@@ -3,11 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
+
+#include "RPG/RPGDataTables.h"
+
 #include "RPG/enums/RPGActionTypeEnum.h"
 #include "RPG/enums/RPGItemRarityEnum.h"
 #include "RPG/enums/RPGItemTypeEnum.h"
 #include "RPG/enums/RPGStatTypeEnum.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+
+#include "RPG/structs/RPGBaseItemStruct.h"
+
 #include "RPGCustomFunctionLibrary.generated.h"
 
 /**
@@ -18,6 +24,7 @@ class RPG_API URPGCustomFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
+public:
     /*				Conversion				*/
     UFUNCTION(BlueprintCallable, Category = "Custom")
         static FText ActionTypeToText(ActionTypeEnum InActionType);
@@ -29,10 +36,13 @@ class RPG_API URPGCustomFunctionLibrary : public UBlueprintFunctionLibrary
             ItemTypeToImage(ItemTypeEnum InItemType);*/
 
     UFUNCTION(BlueprintCallable, Category = "Custom")
+        static FText ItemSubtypeToText(ItemSubtypeEnum InItemSubtype);
+
+    UFUNCTION(BlueprintCallable, Category = "Custom")
         static FText ItemRarityToText(ItemRarityEnum InItemRarity);
 
     UFUNCTION(BlueprintCallable, Category = "Custom")
-        static FColor ItemRarityToColor(ItemRarityEnum InItemRarity);
+        static FLinearColor ItemRarityToColor(ItemRarityEnum InItemRarity);
 
     UFUNCTION(BlueprintCallable, Category = "Custom")
         static FText StatTypeToText(StatsEnum InStatType);
@@ -54,4 +64,7 @@ class RPG_API URPGCustomFunctionLibrary : public UBlueprintFunctionLibrary
 
     UFUNCTION(BlueprintCallable, Category = "Custom")
         static FText GetItemDisplayName(FName InItemName);
+
+    UFUNCTION(BlueprintCallable, Category = "Custom")
+        static FBaseItemStruct GetItemFromDataTable(FItemsTable InItem);
 };
